@@ -198,7 +198,7 @@ async function callGeminiAPI() {
                       ", "
                     )}야.
                     5. 여행 일정은 ${selectedSchedule} 정도로 하고 싶어.
-                    이 조건들을 바탕으로 여행 일정을 Day 1, Day 2 식으로 나누어 추천해주고 절대 마크다운 형식으로 보여주지마. 그리고 프롬프트 결과 형식은 맨처음 "아이와 함께 떠나는 4박 5일 힐링하는 서울 여행" 이런식으로 제목을 보여줘 그리고 다음에 각 일 수 마다 방문할 정확한 장소를 예를 들어서 "Day1 : 부산 해운대 해수욕장 & 부산 해운데 정통 시장" 이런식으로 부제목으로 나눠줘 항상 Day 옆에 그 날 방문할 실제 존재 하는 정확한 장소만을 꼭 반드시 보여줘야 해 예를 들어서 방문할 실제 정확한 장소 이후에 방문할 곳이 없이 자유시간이라면 그냥 방문할 장소라고만 보여줘 그리고 각각의 일 수에 대한 계획을 보여줘 그리고 계획에 대한 내용은 임의적으로 시간을 넣어서 계획을 알려줘 예를 들어서 "오후 1:00 : 두물머리로 이동해서 멋있는 경치를 감상하며 힐링해보세요." 이런 식으로 작성해줘. 마지막으로 맨 밑에 한번에 각 날짜에 맞춰서 방문할 실제 있는 정확한 장소를 보여줘. 예를 들어서 "Day1 : 부산 해운대 해수욕장, 해운대 정통 시장" 그리고 있다면 다음 줄에 각각 날짜에 대한 방문할 장소 보여줘. 만약에 방문할 장소가 없고 그날 귀가와 근처 쇼핑 정도나 혹은 방문할 장소 없이 자유시간 이라면 따로 넣지 말고 그 전 Day까지만 보여주고 그건 따로 보여주지 말아줘`,
+                    이 조건들을 바탕으로 여행 일정을 Day 1, Day 2 식으로 나누어 추천해주고 절대 마크다운 형식으로 보여주지마. 그리고 프롬프트 결과 형식은 맨처음 "아이와 함께 떠나는 4박 5일 힐링하는 서울 여행" 이런식으로 제목을 보여줘 그리고 다음에 각 일 수 마다 방문할 정확한 장소를 예를 들어서 "Day1 : 부산 해운대 해수욕장 , 부산 해운데 정통 시장" 이런식으로 부제목으로 나눠줘 항상 Day 옆에 그 날 방문할 실제 존재 하는 정확한 장소만을 꼭 반드시 보여줘야 해. 그리고 장소를 구분 할 때는 항상 사이에 ","를 넣어서 구분해서 제목으로 달아줘. 예를 들어서 방문할 실제 정확한 장소 이후에 방문할 곳이 없이 자유시간이라면 그냥 방문할 장소라고만 보여줘 그리고 각각의 일 수에 대한 계획을 보여줘 그리고 계획에 대한 내용은 임의적으로 시간을 넣어서 계획을 알려줘 예를 들어서 "오후 1:00 : 두물머리로 이동해서 멋있는 경치를 감상하며 힐링해보세요." 이런 식으로 작성해줘. `,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -215,14 +215,6 @@ async function callGeminiAPI() {
 //     center: { lat: 33.499, lng: 126.531 }, // 예시 좌표 (제주도)
 //     zoom: 10,
 //   });
-
-//   // 지도에 마커 추가
-//   new google.maps.Marker({
-//     position: { lat: 33.499, lng: 126.531 },
-//     map: map,
-//     title: "제주도",
-//   });
-// }
 
 let geocoder;
 let map; // Google Map 객체를 저장할 변수
@@ -246,19 +238,18 @@ function getLatLngFromAddress(address) {
 }
 
 // 전역 변수 선언
-let dayPlaces = {};  // {} 빈 객체로 초기화
+let dayPlaces = {}; // {} 빈 객체로 초기화
 
-// Day별 방문 장소 추출 함수
 function extractDayPlaces(plan) {
-  const regex = /Day\s*(\d+)\s*:\s*(.*?)(?=\n?Day\s*\d+:|$)/gs;
-  const result = {};
+  const regex = /Day\s*\d+\s*:\s*([^\n]+)/g;
+  const result = [];
   let match;
 
   while ((match = regex.exec(plan)) !== null) {
-    const dayNumber = match[1]; 
-    const places = match[2].split(',').map(place => place.trim());
-    result[dayNumber] = places;
+    const places = match[1].split(",").map((place) => place.trim());
+    result.push(places);
   }
+
   return result;
 }
 
