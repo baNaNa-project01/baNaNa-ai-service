@@ -209,21 +209,6 @@ async function callGeminiAPI() {
   return json.reply;
 }
 
-// function initMap() {
-//   // Google Maps API를 사용한 지도 초기화 예시
-//   const map = new google.maps.Map(document.getElementById("map"), {
-//     center: { lat: 33.499, lng: 126.531 }, // 예시 좌표 (제주도)
-//     zoom: 10,
-//   });
-
-//   // 지도에 마커 추가
-//   new google.maps.Marker({
-//     position: { lat: 33.499, lng: 126.531 },
-//     map: map,
-//     title: "제주도",
-//   });
-// }
-
 let geocoder;
 let map; // Google Map 객체를 저장할 변수
 
@@ -246,7 +231,7 @@ function getLatLngFromAddress(address) {
 }
 
 // 전역 변수 선언
-let dayPlaces = {};  // {} 빈 객체로 초기화
+let dayPlaces = {}; // {} 빈 객체로 초기화
 
 // Day별 방문 장소 추출 함수
 function extractDayPlaces(plan) {
@@ -255,13 +240,12 @@ function extractDayPlaces(plan) {
   let match;
 
   while ((match = regex.exec(plan)) !== null) {
-    const dayNumber = match[1]; 
-    const places = match[2].split(',').map(place => place.trim());
+    const dayNumber = match[1];
+    const places = match[2].split(",").map((place) => place.trim());
     result[dayNumber] = places;
   }
   return result;
 }
-
 
 // 구글 맵에서 마커 찍는 함수
 function initMap() {
