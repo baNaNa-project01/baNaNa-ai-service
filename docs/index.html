@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>여행 계획</title>
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtxMdg_6qYFtctFC7OXcYILL3j3JLAFno&callback=initMap" async defer></script>
+  </head>
+  <body>
+    <!-- 프로그레스 바 -->
+    <div id="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    
+    <div class="container">
+      <div id="step1">
+        <h2>대한민국</h2>
+        <div class="location-buttons">
+          <button class="btn" onclick="selectLocation('서울')">서울</button>
+          <button class="btn" onclick="selectLocation('가평·양평')">
+            가평·양평
+          </button>
+          <button class="btn" onclick="selectLocation('강릉·속초')">
+            강릉·속초
+          </button>
+          <button class="btn" onclick="selectLocation('경주')">경주</button>
+          <button class="btn" onclick="selectLocation('부산')">부산</button>
+          <button class="btn" onclick="selectLocation('여수')">여수</button>
+          <button class="btn" onclick="selectLocation('전주')">전주</button>
+          <button class="btn" onclick="selectLocation('제주')">제주</button>
+          <button class="btn" onclick="selectLocation('춘천·홍천')">
+            춘천·홍천
+          </button>
+          <button class="btn" onclick="selectLocation('태안')">태안</button>
+          <button class="btn" onclick="selectLocation('통영·거제·남해')">
+            통영·거제·남해
+          </button>
+          <button class="btn" onclick="selectLocation('포항·안동')">
+            포항·안동
+          </button>
+        </div>
+        <button class="next-btn" id="nextStep1" onclick="goToStep2()" disabled>
+          다음
+        </button>
+      </div>
+
+      <!-- 동반자 선택 화면 -->
+      <div id="step2" class="hidden">
+        <button class="back-btn" onclick="goToStep1()">이전</button>
+        <!-- <div class="emoji">😎</div> -->
+        <h2>누구와 떠나나요?</h2>
+        <p>다중 선택이 가능해요.</p>
+        <div class="location-buttons">
+          <button class="btn" onclick="selectedCompanion('혼자')">혼자</button>
+          <button class="btn" onclick="selectedCompanion('친구와')">
+            친구와
+          </button>
+          <button class="btn" onclick="selectedCompanion('연인과')">
+            연인과
+          </button>
+          <button class="btn" onclick="selectedCompanion('배우자와')">
+            배우자와
+          </button>
+          <button class="btn" onclick="selectedCompanion('아이와')">
+            아이와
+          </button>
+          <button class="btn" onclick="selectedCompanion('부모님과')">
+            부모님과
+          </button>
+          <button class="btn" onclick="selectedCompanion('애완동물')">
+            애완동물
+          </button>
+        </div>
+        <button class="next-btn" id="nextStep2" onclick="goToStep3()" disabled>
+          다음
+        </button>
+      </div>
+
+      <!-- 여행 기간 선택 화면 -->
+      <div id="step3" class="hidden">
+        <button class="back-btn" onclick="goToStep2FromStep3()">이전</button>
+        <h2>여행 기간은 어떻게 되나요?</h2>
+        <div class="location-buttons">
+          <button class="btn" onclick="selectDuration('1일')">당일치기</button>
+          <button class="btn" onclick="selectDuration('1박 2일')">
+            1박 2일
+          </button>
+          <button class="btn" onclick="selectDuration('2박 3일')">
+            2박 3일
+          </button>
+          <button class="btn" onclick="selectDuration('3박 4일')">
+            3박 4일
+          </button>
+          <button class="btn" onclick="selectDuration('4박 5일')">
+            4박 5일
+          </button>
+          <button class="btn" onclick="selectDuration('5박 6일')">
+            5박 6일
+          </button>
+        </div>
+        <button class="next-btn" id="nextStep3" onclick="goToStep4()" disabled>
+          다음
+        </button>
+      </div>
+
+      <!-- 여행 스타일-->
+      <div id="step4" class="hidden">
+        <button class="back-btn" onclick="goToStep3FromStep4()">이전</button>
+        <h2>어떤 여행 스타일을 선호하시나요?</h2>
+        <div class="location-buttons">
+          <button class="btn" onclick="selectStyle('체험·액티비티')">
+            체험·액티비티
+          </button>
+          <button class="btn" onclick="selectStyle('자연과 함께')">
+            자연과 함께
+          </button>
+          <button
+            class="btn"
+            onclick="selectStyle('해당 지역의 유명 관광지를 필수로 해')"
+          >
+            유명 관광지 필수
+          </button>
+          <button
+            class="btn"
+            onclick="selectStyle('힐링을 하며 마음의 안정을 얻을 수 있는 장소를 포함해')"
+          >
+            힐링을 느끼는
+          </button>
+          <button class="btn" onclick="selectStyle('여행지 느낌을 받아야해')">
+            여행지 느낌을 받는
+          </button>
+          <button class="btn" onclick="selectStyle('쇼핑을 우선으로 해')">
+            쇼핑을 우선으로 하는
+          </button>
+          <button
+            class="btn"
+            onclick="selectStyle('관광 보다는 해당 지역의 대표 맛집을 포함해')"
+          >
+            관광 보다는 맛집
+          </button>
+          <button class="btn" onclick="selectStyle('SNS 핫플레이스를 가야해')">
+            SNS 핫플레이스
+          </button>
+          <button
+            class="btn"
+            onclick="selectStyle('문화·예술·역사 체험할 수 있는 장소를 포함')"
+          >
+            문화·예술·역사
+          </button>
+        </div>
+        <button class="next-btn" id="nextStep4" onclick="goToStep5()">
+          다음
+        </button>
+      </div>
+
+      <!-- 여행 일정-->
+      <div id="step5" class="hidden">
+        <button class="back-btn" onclick="goToStep4FromStep5()">이전</button>
+        <h2>어느 정도의 일정을 선호하시나요?</h2>
+        <div class="location-buttons">
+          <button class="btn" onclick="selectSchedule('빼곡한 일정 선호')">
+            빼곡한 일정 선호
+          </button>
+          <button class="btn" onclick="selectSchedule('널널한 일정 선호')">
+            널널한 일정 선호
+          </button>
+        </div>
+        <button class="next-btn" id="nextStep5" onclick="showSelection()">
+          결과보기
+        </button>
+      </div>
+    </div>
+
+    <!-- 제미나이 답변 출력
+    <div id="result" class="hidden">
+      <h3>여행 계획 결과</h3>
+      <div id="resultText"></div>
+    </div> -->
+
+    <!-- 여행 계획 결과 화면 -->
+    <!-- <div id="step6" class="hidden">
+      <button class="back-btn" onclick="goToStep1FromStep6()">다시하기</button>
+      <h2>여행 계획 결과</h2>
+      <div id="resultText"></div>
+    </div> -->
+
+    <div id="step6" class="hidden">
+      <button class="back-btn" onclick="goToStep1FromStep6()">다시하기</button>
+      <h2>여행 계획 결과</h2>
+      <div class="result-container">
+        <div id="mapContainer" class="map-container hidden">
+          <div id="map"></div> <!-- 지도맵을 표시할 div -->
+        </div>
+        <div id="resultText" class="result-text"></div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
