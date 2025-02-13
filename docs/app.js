@@ -271,7 +271,7 @@ function initMap() {
   //         console.error(error);
   //     });
 
-  //주소 배열
+  //주소지 배열
   const addresses = [
     "제주 동문시장",
     "우도",
