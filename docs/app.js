@@ -198,7 +198,7 @@ async function callGeminiAPI() {
                       ", "
                     )}야.
                     5. 여행 일정은 ${selectedSchedule} 정도로 하고 싶어.
-                    이 조건들을 바탕으로 여행 일정을 Day 1, Day 2 식으로 나누어 추천해주고 절대 마크다운 형식으로 보여주지마. 그리고 프롬프트 결과 형식은 맨처음 "아이와 함께 떠나는 4박 5일 힐링하는 서울 여행" 이런식으로 제목을 보여줘 그리고 다음에 각 일 수 마다 방문할 정확한 장소를 예를 들어서 "Day1 : 부산 해운대 해수욕장 & 부산 해운데 정통 시장" 이런식으로 부제목으로 나눠줘 항상 Day 옆에 그 날 방문할 실제 존재 하는 정확한 장소만을 꼭 반드시 보여줘야 해 예를 들어서 방문할 실제 정확한 장소 이후에 방문할 곳이 없이 자유시간이라면 그냥 방문할 장소라고만 보여줘 그리고 각각의 일 수에 대한 계획을 보여줘 그리고 계획에 대한 내용은 임의적으로 시간을 넣어서 계획을 알려줘 예를 들어서 "오후 1:00 : 두물머리로 이동해서 멋있는 경치를 감상하며 힐링해보세요." 이런 식으로 작성해줘. 마지막으로 맨 밑에 한번에 각 날짜에 맞춰서 방문할 실제 있는 정확한 장소를 보여줘. 예를 들어서 "Day1 : 부산 해운대 해수욕장, 해운대 정통 시장" 그리고 있다면 다음 줄에 각각 날짜에 대한 방문할 장소 보여줘. 만약에 방문할 장소가 없고 그날 귀가와 근처 쇼핑 정도나 혹은 방문할 장소 없이 자유시간 이라면 따로 넣지 말아줘`,
+                    이 조건들을 바탕으로 여행 일정을 Day 1, Day 2 식으로 나누어 추천해주고 절대 마크다운 형식으로 보여주지마. 그리고 프롬프트 결과 형식은 맨처음 "아이와 함께 떠나는 4박 5일 힐링하는 서울 여행" 이런식으로 제목을 보여줘 그리고 다음에 각 일 수 마다 방문할 정확한 장소를 예를 들어서 "Day1 : 부산 해운대 해수욕장 & 부산 해운데 정통 시장" 이런식으로 부제목으로 나눠줘 항상 Day 옆에 그 날 방문할 실제 존재 하는 정확한 장소만을 꼭 반드시 보여줘야 해 예를 들어서 방문할 실제 정확한 장소 이후에 방문할 곳이 없이 자유시간이라면 그냥 방문할 장소라고만 보여줘 그리고 각각의 일 수에 대한 계획을 보여줘 그리고 계획에 대한 내용은 임의적으로 시간을 넣어서 계획을 알려줘 예를 들어서 "오후 1:00 : 두물머리로 이동해서 멋있는 경치를 감상하며 힐링해보세요." 이런 식으로 작성해줘. 마지막으로 맨 밑에 한번에 각 날짜에 맞춰서 방문할 실제 있는 정확한 장소를 보여줘. 예를 들어서 "Day1 : 부산 해운대 해수욕장, 해운대 정통 시장" 그리고 있다면 다음 줄에 각각 날짜에 대한 방문할 장소 보여줘. 만약에 방문할 장소가 없고 그날 귀가와 근처 쇼핑 정도나 혹은 방문할 장소 없이 자유시간 이라면 따로 넣지 말고 그 전 Day까지만 보여주고 그건 따로 보여주지 말아줘`,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -227,6 +227,7 @@ async function callGeminiAPI() {
 let geocoder;
 let map; // Google Map 객체를 저장할 변수
 
+//위도, 경도 받아오는 API
 function getLatLngFromAddress(address) {
   return new Promise((resolve, reject) => {
     geocoder = new google.maps.Geocoder();
@@ -244,88 +245,106 @@ function getLatLngFromAddress(address) {
   });
 }
 
-function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    // map div id 추가
-    center: { lat: 37.566, lng: 126.978 }, // 서울 중심으로 초기 위치 설정
-    zoom: 10, // 적절한 줌 레벨 설정
-  });
-  geocoder = new google.maps.Geocoder();
+// 전역 변수 선언
+let dayPlaces = {};  // {} 빈 객체로 초기화
 
-  // const address = "부산광역시 해운대구 달맞이길 30";
+// Day별 방문 장소 추출 함수
+function extractDayPlaces(plan) {
+  const regex = /Day\s*(\d+)\s*:\s*(.*?)(?=\n?Day\s*\d+:|$)/gs;
+  const result = {};
+  let match;
 
-  // getLatLngFromAddress(address)
-  //     .then(latLng => {
-  //         console.log("Latitude:", latLng.lat);
-  //         console.log("Longitude:", latLng.lng);
-
-  //         new google.maps.Marker({ // 마커 생성
-  //             position: latLng,
-  //             map: map,
-  //             title: address // 주소를 마커 타이틀로 설정
-  //         });
-  //         map.setCenter(latLng); // 지도 중심을 해당 좌표로 이동
-
-  //     })
-  //     .catch(error => {
-  //         console.error(error);
-  //     });
-
-  //주소지 배열
-  const addresses = [
-    "제주 동문시장",
-    "우도",
-    "성산일출봉",
-  ];
-
-  Promise.all(addresses.map((address) => getLatLngFromAddress(address)))
-    .then((results) => {
-      results.forEach((latLng, index) => {
-        console.log(
-          `${addresses[index]} - Latitude: ${latLng.lat}, Longitude: ${latLng.lng}`
-        );
-        new google.maps.Marker({
-          // 여러 주소에 대한 마커 생성
-          position: latLng,
-          map: map,
-          title: addresses[index],
-        });
-      });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  while ((match = regex.exec(plan)) !== null) {
+    const dayNumber = match[1]; 
+    const places = match[2].split(',').map(place => place.trim());
+    result[dayNumber] = places;
+  }
+  return result;
 }
 
-// 5단계에서 결과보기
+
+// 구글 맵에서 마커 찍는 함수
+function initMap() {
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 37.566, lng: 126.978 }, // 초기 위치 (서울)
+    zoom: 10,
+  });
+
+  geocoder = new google.maps.Geocoder();
+
+  // Day별 장소 배열을 순회하면서 마커 찍기
+  for (const day in dayPlaces) {
+    dayPlaces[day].forEach((place) => {
+      // 구글 지도에서 주소를 위도, 경도로 변환하여 마커 찍기
+      getLatLngFromAddress(place)
+        .then((latLng) => {
+          new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title: place,
+          });
+        })
+        .catch((error) => {
+          console.error(`Error geocoding ${place}:`, error);
+        });
+    });
+  }
+}
+
+// 5단계에서 결과 보기
 function showSelection() {
+  // 진행바 삭제 (UI 업데이트)
   deleteProgressBar();
+
+  // Gemini API 호출하여 여행 일정 데이터 가져오기
   callGeminiAPI().then((reply) => {
+    console.log("API 응답:", reply); // ✅ API 응답 확인 (디버깅용)
+
+    // 결과를 표시할 HTML 요소 가져오기
     const resultText = document.getElementById("resultText");
 
-    resultText.innerHTML = ""; // 기존 내용 초기화
-    const lines = reply.split("\n"); // 줄바꿈 기준으로 데이터 분리
+    resultText.innerHTML = ""; // 기존 내용을 초기화하여 새로운 결과를 표시
 
-    let currentDay = "";
+    // 응답 내용을 줄바꿈(\n) 기준으로 나누어 배열로 변환
+    const lines = reply.split("\n");
+
+    let currentDay = ""; // 현재 날짜를 저장할 변수
     lines.forEach((line) => {
       if (line.startsWith("Day")) {
+        // "Day"로 시작하는 줄이면 날짜 제목을 div로 생성
         currentDay = document.createElement("div");
-        currentDay.classList.add("day-title");
-        currentDay.textContent = line;
-        resultText.appendChild(currentDay);
+        currentDay.classList.add("day-title"); // CSS 스타일 적용을 위해 클래스 추가
+        currentDay.textContent = line; // 텍스트 설정
+        resultText.appendChild(currentDay); // 결과 영역(resultText)에 추가
       } else {
+        // 방문 장소인 경우 p 태그로 생성하여 추가
         const p = document.createElement("p");
         p.textContent = line;
         resultText.appendChild(p);
       }
     });
 
-    // 결과 화면으로 이동
+    // 📌 Day별 방문 장소 배열 저장 (전역 변수로 사용)
+    dayPlaces = extractDayPlaces(reply);
+    console.log("추출된 dayPlaces:", dayPlaces); // ✅ 추출된 데이터 확인 (디버깅용)
+
+    // dayPlaces가 비어 있으면 오류 메시지 출력 후 함수 종료
+    if (!dayPlaces || Object.keys(dayPlaces).length === 0) {
+      console.error("dayPlaces가 비어 있음!");
+      return;
+    }
+
+    // 지도 컨테이너를 보이도록 변경 (기본적으로 숨겨져 있을 가능성이 있음)
+    document.getElementById("mapContainer").classList.remove("hidden");
+
+    // 화면 전환: 진행 중 화면(step5) 숨기고 결과 화면(step6) 표시
     document.getElementById("progress-container").classList.add("hidden");
     document.getElementById("step5").classList.add("hidden");
     document.getElementById("step6").classList.remove("hidden");
-    // 지도 표시
-    document.getElementById("mapContainer").classList.remove("hidden");
+
+    console.log("initMap 호출 전 dayPlaces:", dayPlaces); // ✅ 지도 초기화 전에 데이터 확인
+
+    // 지도 초기화 함수 실행 (마커 찍기)
     initMap();
   });
 }
