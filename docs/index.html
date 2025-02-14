@@ -176,6 +176,19 @@
     <div id="step6" class="hidden">
       <button class="back-btn" onclick="goToStep1FromStep6()">다시하기</button>
       <h2>여행 계획 결과</h2>
+
+      <!-- 날짜버튼 추가 부분 -->
+      <div id="dayFilterButtons" class="day-buttons-container hidden">
+        <button onclick="showMarkersForDay('Day1')">Day 1</button>
+        <button onclick="showMarkersForDay('Day2')">Day 2</button>
+        <button onclick="showMarkersForDay('Day3')">Day 3</button>
+        <button onclick="showMarkersForDay('Day4')">Day 4</button>
+        <button onclick="showMarkersForDay('Day5')">Day 5</button>
+        <button onclick="showMarkersForDay('Day6')">Day 6</button>
+        <button onclick="showMarkersForDay('All')">모두 보기</button>
+      </div>
+      
+      <!-- 기존 부분 -->
       <div class="result-container">
         <div id="mapContainer" class="map-container hidden">
           <div id="map"></div> <!-- 지도맵을 표시할 div -->
