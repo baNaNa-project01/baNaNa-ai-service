@@ -247,29 +247,31 @@ function extractDayPlaces(plan) {
 }
 
 function showDayButtons() {
-  const dayButtonsContainer = document.getElementById('dayFilterButtons');
-  const allButtons = dayButtonsContainer.getElementsByTagName('button');
+  const dayButtonsContainer = document.getElementById("dayFilterButtons");
+  const allButtons = dayButtonsContainer.getElementsByTagName("button");
 
   // dayPlaces 배열의 길이에 맞게 버튼을 보이게 함
-  for (let i = 0; i < allButtons.length - 1; i++) { // 마지막 버튼(모두 보기)은 항상 보이게
+  for (let i = 0; i < allButtons.length - 1; i++) {
+    // 마지막 버튼(모두 보기)은 항상 보이게
     const button = allButtons[i];
-    const dayIndex = parseInt(button.innerText.replace('Day ', ''));
+    const dayIndex = parseInt(button.innerText.replace("Day ", ""));
 
     if (dayIndex <= dayPlaces.length) {
-      button.style.display = 'inline-block'; // 버튼 보이기
+      button.style.display = "inline-block"; // 버튼 보이기
     } else {
-      button.style.display = 'none'; // 버튼 숨기기
+      button.style.display = "none"; // 버튼 숨기기
     }
   }
   // '모두 보기' 버튼은 항상 보이게
-  allButtons[allButtons.length - 1].style.display = 'inline-block';
+  allButtons[allButtons.length - 1].style.display = "inline-block";
 }
 
-
-// 🎨 색상별 마커 아이콘 반환 함수
+//구글 마커에 색상 배열을 색상별로 가져오는 함수
 function getMarkerIcon(dayIndex) {
   const colors = ["red", "blue", "green", "yellow", "purple", "orange"];
-  return `http://maps.google.com/mapfiles/ms/icons/${colors[dayIndex % colors.length]}-dot.png`;
+  return `http://maps.google.com/mapfiles/ms/icons/${
+    colors[dayIndex % colors.length]
+  }-dot.png`;
 }
 
 //Day 별로 마커를 보여주는 함수(모두 보기 버튼은 초기 모든 마커를 다시 볼 수 있게 함)
@@ -309,6 +311,12 @@ function initMap() {
     console.error("dayPlaces가 비어 있음!");
     return;
   }
+
+  // 기존 마커 초기화
+  Object.values(dayMarkers).forEach((markers) =>
+    markers.forEach((marker) => marker.setMap(null))
+  );
+  dayMarkers = {}; // 기존 마커 데이터를 완전히 초기화
 
   // 지도 초기화 부분
   const firstPlace = dayPlaces[0][0]; // 첫 번째 장소
