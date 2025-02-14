@@ -232,6 +232,7 @@ function getLatLngFromAddress(address) {
 // 전역 변수 선언
 let dayPlaces = {}; // {} 빈 객체로 초기화
 
+//프롬프트 결과 중 Day로 시작하는 행에서 ,를 기준으로 여행지 추출 함수
 function extractDayPlaces(plan) {
   const regex = /Day\s*\d+\s*:\s*([^\n]+)/g;
   const result = [];
@@ -245,34 +246,45 @@ function extractDayPlaces(plan) {
   return result;
 }
 
-
 // 구글 맵에서 마커 찍는 함수
 function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 37.566, lng: 126.978 }, // 초기 위치 (서울)
-    zoom: 10,
-  });
+  if (!dayPlaces || dayPlaces.length === 0 || dayPlaces[0].length === 0) {
+    console.error("dayPlaces가 비어 있음!");
+    return;
+  }
 
+  const firstPlace = dayPlaces[0][0]; // 첫 번째 장소
   geocoder = new google.maps.Geocoder();
 
-  // Day별 장소 배열을 순회하면서 마커 찍기
-  for (const day in dayPlaces) {
-    dayPlaces[day].forEach((place) => {
-      // 구글 지도에서 주소를 위도, 경도로 변환하여 마커 찍기
-      getLatLngFromAddress(place)
-        .then((latLng) => {
-          new google.maps.Marker({
-            position: latLng,
-            map: map,
-            title: place,
-          });
-        })
-        .catch((error) => {
-          console.error(`Error geocoding ${place}:`, error);
+  getLatLngFromAddress(firstPlace)
+    .then((latLng) => {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: latLng, // 첫 번째 장소 기준으로 지도 중앙 설정
+        zoom: 10,
+      });
+
+      // Day별 장소 배열을 순회하면서 마커 찍기
+      for (const day of dayPlaces) {
+        day.forEach((place) => {
+          getLatLngFromAddress(place)
+            .then((latLng) => {
+              new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: place,
+              });
+            })
+            .catch((error) => {
+              console.error(`Error geocoding ${place}:`, error);
+            });
         });
+      }
+    })
+    .catch((error) => {
+      console.error(`Error geocoding first place (${firstPlace}):`, error);
     });
-  }
 }
+
 
 // 5단계에서 결과 보기
 function showSelection() {
