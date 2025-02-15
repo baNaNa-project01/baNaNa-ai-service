@@ -30,6 +30,7 @@ function updateProgressBar() {
   document.getElementById("progressBar").style.width = `${progress}%`;
 }
 
+//결과 화면에서 프로그레스바 삭제 함수
 function deleteProgressBar() {
   const progressBar = document.getElementById("progressBar");
   progressBar.style.width = "100%"; // 먼저 100%로 채우고
@@ -209,6 +210,13 @@ async function callGeminiAPI() {
   return json.reply;
 }
 
+//결과화면에 Day버튼 활성화 함수
+function setActiveButton(clickedButton) {
+  const buttons = document.querySelectorAll(".day-buttons-container button");
+  buttons.forEach(button => button.classList.remove("selected")); // 기존 선택 해제
+  clickedButton.classList.add("selected"); // 선택된 버튼에 클래스 추가
+}
+
 let geocoder;
 let map; // Google Map 객체를 저장할 변수
 // 전역 변수 선언
@@ -245,6 +253,7 @@ function extractDayPlaces(plan) {
 
   return result;
 }
+
 
 function showDayButtons() {
   const dayButtonsContainer = document.getElementById("dayFilterButtons");
