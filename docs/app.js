@@ -5,6 +5,10 @@ let selectedStyle = []; //여행 스타일
 let selectedSchedule = ""; //여행 일정 정도
 //일 자별로 마커 찍기
 let dayMarkers = {}; // 각 날짜별 마커 저장
+let geocoder;
+let map; // Google Map 객체를 저장할 변수
+// 전역 변수 선언
+let dayPlaces = {}; // {} 빈 객체로 초기화
 
 //프로그레스바 변수
 let currentStep = 0;
@@ -213,14 +217,9 @@ async function callGeminiAPI() {
 //결과화면에 Day버튼 활성화 함수
 function setActiveButton(clickedButton) {
   const buttons = document.querySelectorAll(".day-buttons-container button");
-  buttons.forEach(button => button.classList.remove("selected")); // 기존 선택 해제
+  buttons.forEach((button) => button.classList.remove("selected")); // 기존 선택 해제
   clickedButton.classList.add("selected"); // 선택된 버튼에 클래스 추가
 }
-
-let geocoder;
-let map; // Google Map 객체를 저장할 변수
-// 전역 변수 선언
-let dayPlaces = {}; // {} 빈 객체로 초기화
 
 //위도, 경도 받아오는 API
 function getLatLngFromAddress(address) {
@@ -254,7 +253,6 @@ function extractDayPlaces(plan) {
   return result;
 }
 
-
 function showDayButtons() {
   const dayButtonsContainer = document.getElementById("dayFilterButtons");
   const allButtons = dayButtonsContainer.getElementsByTagName("button");
@@ -283,7 +281,6 @@ function getMarkerIcon(dayIndex) {
   }-dot.png`;
 }
 
-//Day 별로 마커를 보여주는 함수(모두 보기 버튼은 초기 모든 마커를 다시 볼 수 있게 함)
 function showMarkersForDay(dayKey) {
   // 모든 마커 숨기기
   Object.values(dayMarkers).forEach((markers) =>
@@ -292,28 +289,28 @@ function showMarkersForDay(dayKey) {
 
   // 모든 마커를 다시 보여주는 기능
   if (dayKey === "All") {
+    // "모두 보기" 클릭 시 지도 중심을 첫 번째 마커로 이동하고, 지도를 축소
+    let bounds = new google.maps.LatLngBounds();
     Object.values(dayMarkers).forEach((markers) => {
-      markers.forEach((marker, index) => {
+      markers.forEach((marker) => {
         marker.setMap(map);
-        if (index === 0) {
-          // "모두 보기" 클릭 시 지도 중심을 첫 번째 마커로 이동
-          map.setCenter(marker.getPosition());
-        }
+        bounds.extend(marker.getPosition());
       });
     });
+    map.fitBounds(bounds); // 모든 마커가 보일 수 있도록 지도 축소
   } else {
     // 선택한 날짜의 마커만 보이기
     if (dayMarkers[dayKey]) {
+      let bounds = new google.maps.LatLngBounds();
       dayMarkers[dayKey].forEach((marker, index) => {
         marker.setMap(map);
-        if (index === 0) {
-          // 첫 번째 마커의 위치로 지도를 이동
-          map.setCenter(marker.getPosition());
-        }
+        bounds.extend(marker.getPosition());
       });
+      map.fitBounds(bounds); // 선택된 Day의 마커들을 모두 포함할 수 있도록 지도 확대
     }
   }
 }
+
 
 function initMap() {
   if (!dayPlaces || dayPlaces.length === 0) {
@@ -334,7 +331,7 @@ function initMap() {
   getLatLngFromAddress(firstPlace).then((latLng) => {
     map = new google.maps.Map(document.getElementById("map"), {
       center: latLng,
-      zoom: 10,
+      zoom: 8,
     });
 
     // Day별로 마커 그룹화
@@ -359,9 +356,6 @@ function initMap() {
           });
       });
     });
-
-    // 날짜 버튼 표시
-    showDayButtons();
   });
 }
 
@@ -420,5 +414,7 @@ function showSelection() {
 
     // 지도 초기화 함수 실행 (마커 찍기)
     initMap();
+    // 날짜 버튼 표시
+    showDayButtons();
   });
 }
