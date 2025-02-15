@@ -311,7 +311,6 @@ function showMarkersForDay(dayKey) {
   }
 }
 
-
 function initMap() {
   if (!dayPlaces || dayPlaces.length === 0) {
     console.error("dayPlaces가 비어 있음!");
@@ -331,8 +330,9 @@ function initMap() {
   getLatLngFromAddress(firstPlace).then((latLng) => {
     map = new google.maps.Map(document.getElementById("map"), {
       center: latLng,
-      zoom: 10,
     });
+
+    let bounds = new google.maps.LatLngBounds(); // 마커들을 포함할 범위 객체 생성
 
     // Day별로 마커 그룹화
     dayPlaces.forEach((places, index) => {
@@ -350,6 +350,10 @@ function initMap() {
             });
 
             dayMarkers[dayKey].push(marker);
+            bounds.extend(latLng); // 마커 위치를 bounds에 추가
+
+            // 모든 마커가 추가된 후 지도 확대/축소 및 중앙 조정
+            map.fitBounds(bounds);
           })
           .catch((error) => {
             console.error(`Error geocoding ${place}:`, error);
@@ -358,6 +362,7 @@ function initMap() {
     });
   });
 }
+
 
 // 5단계에서 결과 보기
 function showSelection() {
