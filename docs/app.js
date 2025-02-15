@@ -11,44 +11,36 @@ let map; // Google Map 객체를 저장할 변수
 let dayPlaces = {}; // {} 빈 객체로 초기화
 
 // //프로그레스바 변수
-// let currentStep = 0;
-// const totalSteps = 4; // 총 단계 수
-// let progressWidth = 0;
+let currentStep = 0;
+const totalSteps = 4; // 총 단계 수
+let progressWidth = 0;
 
-// // 프로그레스 바를 서서히 차오르게 하는 함수
-// function increaseProgressBar() {
-//   const progressBar = document.getElementById("progressBar");
-//   const interval = setInterval(function () {
-//     if (progressWidth >= (currentStep / totalSteps) * 100) {
-//       clearInterval(interval); // 목표값에 도달하면 멈추기
-//     } else {
-//       progressWidth += 1; // 1씩 증가
-//       progressBar.style.width = `${progressWidth}%`;
-//     }
-//   }, 10); // 10ms마다 증가
-// }
+// 프로그레스 바를 서서히 차오르게 하는 함수
+function increaseProgressBar() {
+  const progressBar = document.getElementById("progressBar");
+  const interval = setInterval(function () {
+    if (progressWidth >= (currentStep / totalSteps) * 100) {
+      clearInterval(interval); // 목표값에 도달하면 멈추기
+    } else {
+      progressWidth += 1; // 1씩 증가
+      progressBar.style.width = `${progressWidth}%`;
+    }
+  }, 10); // 10ms마다 증가
+}
 
-// // 프로그레스 바 업데이트 함수
-// function updateProgressBar() {
-//   const progress = (currentStep / totalSteps) * 100; // 현재 단계에 대한 비율 계산
-//   document.getElementById("progressBar").style.width = `${progress}%`;
-// }
+// 프로그레스 바 업데이트 함수
+function updateProgressBar() {
+  const progress = (currentStep / totalSteps) * 100; // 현재 단계에 대한 비율 계산
+  document.getElementById("progressBar").style.width = `${progress}%`;
+}
 
-// //결과 화면에서 프로그레스바 삭제 함수
-// function deleteProgressBar() {
-//   const progressBar = document.getElementById("progressBar");
-//   progressBar.style.width = "100%"; // 먼저 100%로 채우고
-//   setTimeout(function () {
-//     const interval = setInterval(function () {
-//       if (progressBar.style.width === "0%") {
-//         clearInterval(interval); // 목표값에 도달하면 멈추기
-//       } else {
-//         let currentWidth = parseInt(progressBar.style.width);
-//         progressBar.style.width = `${currentWidth - 1}%`; // 1%씩 줄어듦
-//       }
-//     }, 50); // 10ms마다 감소
-//   }, 1000); // 1초 후에 프로그레스 바가 사라지기 시작
-// }
+//결과 화면에서 프로그레스바 삭제 함수
+function deleteProgressBar() {
+  const progressBar = document.getElementById("progressBar");
+  if (progressBar) {
+    progressBar.style.display = "none"; // 바로 숨기기
+  }
+}
 
 //1단계 여행지 선택 변수 저장
 function selectLocation(location) {
@@ -65,8 +57,8 @@ function goToStep2() {
   if (selectedLocation) {
     document.getElementById("step1").classList.add("hidden");
     document.getElementById("step2").classList.remove("hidden");
-    // currentStep = 1;
-    // updateProgressBar();
+    currentStep = 1;
+    updateProgressBar();
   }
 }
 
@@ -74,8 +66,8 @@ function goToStep2() {
 function goToStep1() {
   document.getElementById("step2").classList.add("hidden");
   document.getElementById("step1").classList.remove("hidden");
-  // currentStep = 0;
-  // updateProgressBar();
+  currentStep = 0;
+  updateProgressBar();
 }
 
 //2단계 - 동반자 변수를 배열로 중복 저장
@@ -97,8 +89,8 @@ function goToStep3() {
   if (selectedCompanions.length > 0) {
     document.getElementById("step2").classList.add("hidden");
     document.getElementById("step3").classList.remove("hidden");
-    // currentStep = 2;
-    // updateProgressBar();
+    currentStep = 2;
+    updateProgressBar();
   }
 }
 
@@ -106,8 +98,8 @@ function goToStep3() {
 function goToStep2FromStep3() {
   document.getElementById("step3").classList.add("hidden");
   document.getElementById("step2").classList.remove("hidden");
-  // currentStep = 1;
-  // updateProgressBar();
+  currentStep = 1;
+  updateProgressBar();
 }
 
 //3단계 - 기간을 정하기
@@ -125,8 +117,8 @@ function goToStep4() {
   if (selectedDuration) {
     document.getElementById("step3").classList.add("hidden");
     document.getElementById("step4").classList.remove("hidden");
-    // currentStep = 3;
-    // updateProgressBar();
+    currentStep = 3;
+    updateProgressBar();
   }
 }
 
@@ -134,8 +126,8 @@ function goToStep4() {
 function goToStep3FromStep4() {
   document.getElementById("step4").classList.add("hidden");
   document.getElementById("step3").classList.remove("hidden");
-  // currentStep = 2;
-  // updateProgressBar();
+  currentStep = 2;
+  updateProgressBar();
 }
 
 // 4단계 - 여행 스타일 선택 함수 (다중 선택 가능)
@@ -157,8 +149,8 @@ function goToStep5() {
   if (selectedStyle.length > 0) {
     document.getElementById("step4").classList.add("hidden");
     document.getElementById("step5").classList.remove("hidden");
-    // currentStep = 4;
-    // updateProgressBar();
+    currentStep = 4;
+    updateProgressBar();
   }
 }
 
@@ -166,8 +158,8 @@ function goToStep5() {
 function goToStep4FromStep5() {
   document.getElementById("step5").classList.add("hidden");
   document.getElementById("step4").classList.remove("hidden");
-  // currentStep = 3;
-  // updateProgressBar();
+  currentStep = 3;
+  updateProgressBar();
 }
 
 // 5단계 - 여행 일정 선택 함수
@@ -185,8 +177,8 @@ function goToStep1FromStep6() {
   document.getElementById("step6").classList.add("hidden");
   document.getElementById("step1").classList.remove("hidden");
   document.getElementById("progress-container").classList.remove("hidden");
-  // currentStep = 0;
-  // updateProgressBar();
+  currentStep = 0;
+  updateProgressBar();
 }
 
 async function callGeminiAPI() {
@@ -311,7 +303,6 @@ function showMarkersForDay(dayKey) {
   }
 }
 
-
 function initMap() {
   if (!dayPlaces || dayPlaces.length === 0) {
     console.error("dayPlaces가 비어 있음!");
@@ -331,8 +322,9 @@ function initMap() {
   getLatLngFromAddress(firstPlace).then((latLng) => {
     map = new google.maps.Map(document.getElementById("map"), {
       center: latLng,
-      zoom: 10,
     });
+
+    let bounds = new google.maps.LatLngBounds(); // 마커들을 포함할 범위 객체 생성
 
     // Day별로 마커 그룹화
     dayPlaces.forEach((places, index) => {
@@ -350,6 +342,10 @@ function initMap() {
             });
 
             dayMarkers[dayKey].push(marker);
+            bounds.extend(latLng); // 마커 위치를 bounds에 추가
+
+            // 모든 마커가 추가된 후 지도 확대/축소 및 중앙 조정
+            map.fitBounds(bounds);
           })
           .catch((error) => {
             console.error(`Error geocoding ${place}:`, error);
@@ -358,6 +354,7 @@ function initMap() {
     });
   });
 }
+
 
 // 5단계에서 결과 보기
 function showSelection() {
@@ -406,7 +403,7 @@ function showSelection() {
     document.getElementById("mapContainer").classList.remove("hidden");
 
     // 화면 전환: 진행 중 화면(step5) 숨기고 결과 화면(step6) 표시
-    //document.getElementById("progress-container").classList.add("hidden");
+    document.getElementById("progress-container").classList.add("hidden");
     document.getElementById("step5").classList.add("hidden");
     document.getElementById("step6").classList.remove("hidden");
 
